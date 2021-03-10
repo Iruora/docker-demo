@@ -1,0 +1,46 @@
+version: '3'
+networks:
+  ndh-net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.241.0/24"
+
+services:
+  db-postgres:
+    image: postgres
+    networks:
+      ndh-net:
+        ipv4_address: 192.168.241.5
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    ports:
+      - 5444:5432
+    container_name: postgres_ndh
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "root"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  pg-admin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-ndh
+    networks: 
+      - ndh-net
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-arrouurii@gmail.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    ports:
+      - 9632:80
+    depends_on:
+      - db-postgres
+  demo-app:
+    image: demo-test:1.0.0-aplha.0
+    networks:
+      - ndh-net
+    ports:
+      - 9875:9874
+    
