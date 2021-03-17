@@ -7,6 +7,25 @@ networks:
         - subnet: "192.168.241.0/24"
 
 services:
+  keycloak:
+    container_name: "demo-keycloak"
+    image: jboss/keycloak:latest
+    depends_on:
+      - db-postgres
+    ports:
+      - "9189:8080"
+    networks:
+      - ndh-net
+    command: -Dkeycloak.profile.feature.upload_scripts=enabled
+    environment:
+      DB_VENDOR:   POSTGRES
+      DB_ADDR:     db-postgres
+      DB_PORT:     5432
+      DB_DATABASE: keycloak
+      DB_USER:     root
+      DB_PASSWORD: root
+      KEYCLOAK_USER:     admin
+      KEYCLOAK_PASSWORD: admin 
   db-postgres:
     image: postgres
     networks:
