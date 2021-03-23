@@ -1,11 +1,7 @@
 pipeline {
-    agent any
-    tools {
-        maven 'Maven 3.3.9'
-        jdk 'jdk8'
-    }
-    stages{
-        stage("Init"){
+    agent docker:'maven:3.3.3'
+    stages {
+        stage("Init") {
             steps{
                 sh '''
                     echo "PATH = ${PATH}"
@@ -13,7 +9,7 @@ pipeline {
                 '''
             }
         }
-        stage("Build"){
+        stage("Build") {
             steps{
                 sh '''
                     mvn package
@@ -21,7 +17,7 @@ pipeline {
             }
         }
     }
-    post{
+    post {
         success{
             echo "======== SUCCESSED ========"
         }
