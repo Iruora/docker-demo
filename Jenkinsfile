@@ -1,32 +1,32 @@
 pipeline {
     agent any
+    tools {
+        maven 'Maven 3.3.9'
+        jdk 'jdk8'
+    }
     stages{
-        stage("A"){
+        stage("Init"){
             steps{
-                echo "========executing A========"
+                sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                '''
             }
-            post{
-                always{
-                    echo "========always========"
-                }
-                success{
-                    echo "========A executed successfully========"
-                }
-                failure{
-                    echo "========A execution failed========"
-                }
+        }
+        stage("Build"){
+            steps{
+                sh '''
+                    mvn package
+                '''
             }
         }
     }
     post{
-        always{
-            echo "========always========"
-        }
         success{
-            echo "========pipeline executed successfully ========"
+            echo "======== SUCCESSED ========"
         }
         failure{
-            echo "========pipeline execution failed========"
+            echo "======== FAILED ========"
         }
     }
 }
